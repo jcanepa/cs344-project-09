@@ -1,16 +1,16 @@
 #include "ptsim.h"
 
-//
-// Convert a page,offset into an address
-//
+/**
+ * Convert a page,offset into an address
+ */
 int get_address(int page, int offset)
 {
     return (page << PAGE_SHIFT) | offset;
 }
 
-//
-// Initialize RAM
-//
+/**
+ * Initialize RAM
+ */
 void initialize_mem(void)
 {
     memset(mem, 0, MEM_SIZE);
@@ -19,20 +19,19 @@ void initialize_mem(void)
     mem[zpfree_addr] = 1; // Mark zero page as allocated
 }
 
-//
-// Get the page table page for a given process
-//
+/**
+ * Get the page table page for a given process
+ */
 unsigned char get_page_table(int proc_num)
 {
     int ptp_addr = get_address(0, PTP_OFFSET + proc_num);
     return mem[ptp_addr];
 }
 
-//
-// Allocate pages for a new process
-//
-// This includes the new process page table and page_count data pages.
-//
+/**
+ * Allocate pages for a new process
+ * This includes the new process page table and page_count data pages.
+ */
 void new_process(int proc_num, int page_count)
 {
     (void)proc_num;   // remove after implementation
@@ -41,11 +40,10 @@ void new_process(int proc_num, int page_count)
     // TODO
 }
 
-//
-// Print the free page map
-//
-// Don't modify this
-//
+/**
+ * Print the free page map (don't modify)
+ *
+ */
 void print_page_free_map(void)
 {
     printf("--- PAGE FREE MAP ---\n");
@@ -61,11 +59,9 @@ void print_page_free_map(void)
     }
 }
 
-//
-// Print the address map from virtual pages to physical
-//
-// Don't modify this
-//
+/**
+ * Print the address map from virtual pages to physical (don't modify)
+ */
 void print_page_table(int proc_num)
 {
     printf("--- PROCESS %d PAGE TABLE ---\n", proc_num);
@@ -87,9 +83,9 @@ void print_page_table(int proc_num)
     }
 }
 
-//
-// Main -- process command line
-//
+/**
+ * Entrypoint -- process command line
+ */
 int main(int argc, char *argv[])
 {
     assert(PAGE_COUNT * PAGE_SIZE == MEM_SIZE);
