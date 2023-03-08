@@ -109,7 +109,11 @@ int main(int argc, char *argv[])
             int proc_num = atoi(argv[++i]);
             print_page_table(proc_num);
         }
-
-        // TODO: more command line arguments
+        else if (strcmp(argv[i], "np") == 0)
+        {
+            // launch a new process n
+            // with an initial allocation of m pages
+        }
     }
+    return 0;
 }
