@@ -1,7 +1,7 @@
 #include "ptsim.h"
 
 /**
- * Convert a page,offset into an address
+ * Convert a page, offset into an address
  */
 int get_address(int page, int offset)
 {
@@ -29,8 +29,8 @@ unsigned char get_page_table(int proc_num)
 }
 
 /**
- * Allocate pages for a new process
- * This includes the new process page table and page_count data pages.
+ * Allocate pages for a new process,
+ * this includes the new process page table and page_count data pages.
  */
 void new_process(int proc_num, int page_count)
 {
