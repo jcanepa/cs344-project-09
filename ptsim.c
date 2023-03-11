@@ -153,10 +153,10 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(argv[i], "np") == 0)
         {
-
-            // launch a new process n
-            // with an initial allocation of m pages
-            new_process(*argv[i + 1], *argv[i + 2]);
+            // launch a new process n with an initial allocation of m pages
+            new_process(
+                atoi(argv[i + 1]),
+                atoi(argv[i + 2]));
         }
     }
     return 0;
