@@ -5,6 +5,7 @@
  */
 int get_address(int page, int offset)
 {
+    // return page * PAGE_SIZE + offset // is this the same thing as bitshifting below?
     return (page << PAGE_SHIFT) | offset;
 }
 
@@ -13,10 +14,10 @@ int get_address(int page, int offset)
  */
 void initialize_mem(void)
 {
-    memset(mem, 0, MEM_SIZE);
+    memset(mem, 0, MEM_SIZE); // zero every byte in the mem array
 
     int zpfree_addr = get_address(0, 0);
-    mem[zpfree_addr] = 1; // Mark zero page as allocated
+    mem[zpfree_addr] = 1; // mark reserved zero page as allocated
 }
 
 /**
@@ -29,15 +30,56 @@ unsigned char get_page_table(int proc_num)
 }
 
 /**
+ * Return the index of the first freely available page in memory.
+ */
+int allocate_page(void)
+{
+    for (int i = 0; i < PAGE_COUNT; i++)
+    {
+        if (mem[i] == 0)
+        {
+            mem[i] = 1;
+            return i;
+        }
+    }
+    return 0xff; // sorry, no free pages
+}
+
+/**
  * Allocate pages for a new process,
  * this includes the new process page table and page_count data pages.
  */
 void new_process(int proc_num, int page_count)
 {
-    (void)proc_num;   // remove after implementation
-    (void)page_count; // remove after implementation
+    // get the page table page
+    int page_table = allocate_page();
 
-    // TODO
+    if (page_table == 0xff) // initial page table allocation failed
+    {
+        printf("OOM: proc %d: page table\n", proc_num);
+        return;
+    }
+
+    // set this process's page table pointer in zero page
+    mem[64 + proc_num] = page_table;
+
+    // allocate data pages
+    for (int i = 0; i < page_count; i++)
+    {
+        // physical page number
+        int new_page = allocate_page();
+
+        if (new_page == 0xff) // page allocation failed
+        {
+            printf("OOM: proc %d: data page\n", proc_num);
+            return;
+        }
+
+        // set page table to map virtual to physical
+        // virtual page number is i
+        int pt_address = get_address(page_table, i);
+        mem[pt_address] = new_page;
+    }
 }
 
 /**
@@ -111,8 +153,10 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(argv[i], "np") == 0)
         {
+
             // launch a new process n
             // with an initial allocation of m pages
+            new_process(*argv[i + 1], *argv[i + 2]);
         }
     }
     return 0;
